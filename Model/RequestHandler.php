@@ -5,7 +5,8 @@ class RequestHandler {
     private $__parameters = array();
     private $__resource;
     private $__resource_id;
-    private $__allowed_methods= array("GET","POST","DELETE","PUT");
+    private $__allowed_methods= array("GET","POST","DELETE","PUT","OPTIONS");
+    private $__agent;
     
     
     function get__method() {
@@ -24,19 +25,28 @@ class RequestHandler {
         return $this->__resource_id;
     }
 
-    
- 
+    function get__allowed_methods(){
+        return $this->__allowed_methods;
+    }
+
+    function get__agent(){
+        return $this->__agent;
+    }
+
 
     public function __construct() {
         $this->__method = $_SERVER["REQUEST_METHOD"];
         $url_pieces = explode("/",$_SERVER["REQUEST_URI"]);
         // var_dump($url_pieces);
         $this->__resource = (isset($url_pieces[3]))? $url_pieces[3] : "" ;
-        $this->__resource_id =(isset($url_pieces[4]) && is_numeric($url_pieces[4]) ) ?$url_pieces[4] : "";
+        $this->__resource_id =(isset($url_pieces[4])) ?$url_pieces[4] : 0;
         if($this->__method == "POST" || $this->__method =="PUT")
         {
+            // var_dump(file_get_contents('php://input'));
             $this->__parameters = json_decode(file_get_contents('php://input'),true); 
         }
+        $this->__agent =  $_SERVER["HTTP_USER_AGENT"];
+
     }
 
      //***********************************************************************************************************
@@ -55,7 +65,7 @@ class RequestHandler {
       {
         if($output)
         {
-            ResponseHandler::output_with_error(404,"Resource not found 01");
+            ResponseHandler::output_with_error(404,array("error"=>"Resource not found 01"));
         }
         else
         {
@@ -66,7 +76,7 @@ class RequestHandler {
       {
         if($output)
         {
-            ResponseHandler::output_with_error(404,"Resource not found 02");
+            ResponseHandler::output_with_error(404,array("error"=>"Resource not found 02"));
         }
         else
         {
@@ -77,7 +87,7 @@ class RequestHandler {
       {
         if($output)
         {
-            ResponseHandler::output_with_error(404,"Method not allowed");
+            ResponseHandler::output_with_error(404,array("error"=>"Method not allowed"));
         }
         else
         {
