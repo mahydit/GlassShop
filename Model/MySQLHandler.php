@@ -23,8 +23,8 @@ class MySQLHandler {
     }
 
     public function disconnect() {
-        if ($this->_db_handler)
-            mysqli_close($this->_db_handler);
+        if ($this->_db_handler){}
+            // mysqli_close($this->_db_handler);
     }
 
     public function get_data($fields = array(), $start = 0) {
@@ -88,7 +88,7 @@ class MySQLHandler {
             $sql2 = str_replace(",)", ")", $sql2);
             $sql = $sql1 . $sql2;
 
-        
+            // echo "<h5>Sent Query: </h5>" . $sql . "<br/> <br/>";
             if (mysqli_query($this->_db_handler, $sql)) {
                 $this->disconnect();
                 return true;
@@ -101,7 +101,9 @@ class MySQLHandler {
 
     public function search($column, $column_value) {
         $table = $this->_table;
-        $sql = "select * from `$table` where `$column` like  '%" . $column_value . "%' ";
+        $sql = "select * from `$table` where `$column` =" . $column_value ;
+        // echo "<h5>Sent Query: </h5>" . $sql . "<br/> <br/>";
+
         return $this->get_results($sql);
     }
 
@@ -135,6 +137,7 @@ class MySQLHandler {
         $primary_key = $this->_primary_key;
         $sql = "delete  from `" . $table . "` where `" . $primary_key . "` = $id";
         // $this->debug($sql);
+        // echo "<h5>Sent Query: </h5>" . $sql . "<br/> <br/>";
         if (mysqli_query($this->_db_handler, $sql)) {
             $this->disconnect();
             return true;
